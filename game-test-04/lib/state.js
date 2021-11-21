@@ -1,6 +1,7 @@
 import {trace} from "./trace.js";
 import {Ball} from "./models/ball.js";
 import {ForceField} from "./models/forceField.js";
+import {ClickField} from "./models/clickField.js";
 
 export const State = {
     input: {
@@ -97,7 +98,7 @@ export function release(evt) {
 
 export function clickOnCanvas(evt, canvas) {
     console.log(evt)
-    const W = canvas.width / canvas.clientWidth, H = canvas.height / canvas.clientHeight;
-    console.log(evt.offsetX, W, evt.offsetY, H)
-    State.clicks.push([evt.offsetX * W, evt.offsetY * H])
+    const W = canvas.width / canvas.clientWidth;
+    const H = canvas.height / canvas.clientHeight;
+    State.clicks.push(new ClickField({x: evt.offsetX * W, y: evt.offsetY * H, radius: 100}));
 }

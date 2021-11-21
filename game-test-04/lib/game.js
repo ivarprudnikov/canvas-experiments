@@ -23,26 +23,13 @@ export function Game(canvas, w, h, State) {
         this.canvas.clearRect(0, 0, this.gameWidth, this.gameHeight);
         this.canvas.fillStyle = this.state.level.colors.background;
         this.canvas.fillRect(0, 0, this.gameWidth, this.gameHeight);
+        State.clicks = State.clicks.filter(it => it.ttl > 0);
     }
 
     this.draw = () => {
-        State.fields.forEach(field => field.renderOn(this.canvas))
+        State.fields.forEach(field => field.renderOn(this.canvas));
         State.ball.renderOn(this.canvas);
-        this.drawClicks();
-    }
-
-    this.drawClicks = () => {
-        for (const click of State.clicks) {
-            this.canvas.beginPath();
-            this.canvas.arc(click[0], click[1], 5, 0, 2 * Math.PI);
-            this.canvas.fillStyle = 'red';
-            this.canvas.fill();
-
-            this.canvas.beginPath();
-            this.canvas.arc(click[0], click[1], 25, 0, 2 * Math.PI);
-            this.canvas.strokeStyle = 'red';
-            this.canvas.stroke();
-        }
+        State.clicks.forEach(click => click.renderOn(this.canvas));
     }
 
     this.applyUserInput = () => {
@@ -69,18 +56,24 @@ export function Game(canvas, w, h, State) {
 
     this.applyExternalForces = () => {
         let externalForce = null;
-        for(const field of State.fields) {
-            const distanceToFieldCenter = Util.distanceBetween(field.pos, State.ball.pos);
-            if (distanceToFieldCenter < (field.radius + State.ball.radius) && distanceToFieldCenter > 10) {
-                trace('force');
-                const angle = Util.angleRadFromTo(State.ball.pos, field.pos);
+        const forceBetweenFieldAndBall = (field, ball) => {
+            const distanceToFieldCenter = Util.distanceBetween(field.pos, ball.pos);
+            if (distanceToFieldCenter < (field.radius + ball.radius) && distanceToFieldCenter > 2) {
+                const angle = Util.angleRadFromTo(ball.pos, field.pos);
                 const force = field.force/distanceToFieldCenter;
-                if (!externalForce) {
-                    externalForce = new ForceVector(angle, force);
-                } else {
-                    externalForce.add(angle, force);
-                }
+                return new ForceVector(angle, force);
             }
+        }
+        let force;
+        for(const field of State.fields) {
+            force = forceBetweenFieldAndBall(field, State.ball);
+            if (!externalForce) externalForce = force;
+            else externalForce.add(force);
+        }
+        for(const click of State.clicks) {
+            force = forceBetweenFieldAndBall(click, State.ball);
+            if (!externalForce) externalForce = force;
+            else externalForce.add(force);
         }
         if (externalForce) {
             externalForce.add(Util.degreesToRadians(State.ball.directionAngle), State.ball.velocity);

@@ -9,7 +9,12 @@ export /**
 function ForceVector(radians, strength) {
     this.radians = radians;
     this.strength = strength;
+    this.add = (vector) => {
+        if (!vector) return this;
+        return this.add(vector.radians, vector.strength);
+    }
     this.add = (newRad, newStrength) => {
+        if (newRad == null || newStrength == null) return this;
         const x1 = Util.newXAtAngleAndDistance(0, this.radians, this.strength);
         const y1 = Util.newYAtAngleAndDistance(0, this.radians, this.strength);
         const x2 = Util.newXAtAngleAndDistance(x1, newRad, newStrength);
