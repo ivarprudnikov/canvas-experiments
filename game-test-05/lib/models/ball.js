@@ -7,6 +7,7 @@ export function Ball() {
     this.directionSpeed = 3;
     this.velocity = 5;
     this.velocityChangeSpeed = 1;
+    this.bounceFriction = 3;
     this.radius = 40;
     this.pos = {
         x: 240,

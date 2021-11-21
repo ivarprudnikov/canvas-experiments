@@ -16,6 +16,7 @@ export function Game(canvas, w, h, State) {
         this.applyUserInput();
         this.applyExternalForces();
         this.ensureBallInBounds();
+        this.checkBallVelocity();
         this.draw();
         printState(this.state)
     }
@@ -103,13 +104,19 @@ export function Game(canvas, w, h, State) {
         if (newX < 0 || newX > this.gameWidth) {
             newX = newX < 0 ? -newX : this.gameWidth - (newX - this.gameWidth);
             State.ball.directionAngle = Util.degreesMirrorVertical(State.ball.directionAngle);
+            State.ball.velocity -= State.ball.bounceFriction;
         }
         if (newY < 0 || newY > this.gameHeight) {
             newY = newY < 0 ? -newY : (this.gameHeight - (newY - this.gameHeight));
             State.ball.directionAngle = Util.degreesMirrorHorizontal(State.ball.directionAngle);
+            State.ball.velocity -= State.ball.bounceFriction;
         }
-
         State.ball.pos.x = newX;
         State.ball.pos.y = newY;
+    }
+
+    this.checkBallVelocity = () => {
+        if (State.ball.velocity < 1) State.ball.velocity = 1;
+        if (State.ball.velocity > 20) State.ball.velocity = 20;
     }
 }
