@@ -1,5 +1,14 @@
 import {trace} from "./trace.js";
 
+function ForceField({x, y, force, radius}) {
+    this.force = force;
+    this.radius = radius;
+    this.pos = {
+        x: x,
+        y: y
+    };
+}
+
 export const State = {
     input: {
         right: false,
@@ -26,30 +35,9 @@ export const State = {
         }
     },
     fields: [
-        {
-            force: 10,
-            radius: 150,
-            pos: {
-                x: 150,
-                y: 150
-            }
-        },
-        {
-            force: 20,
-            radius: 200,
-            pos: {
-                x: 500,
-                y: 500
-            }
-        },
-        {
-            force: 40,
-            radius: 500,
-            pos: {
-                x: 320,
-                y: 320
-            }
-        }
+        new ForceField({x:150, y:150, force: 10, radius:150}),
+        new ForceField({x:500, y:500, force: 20, radius:200}),
+        new ForceField({x:320, y:320, force: 40, radius:500}),
     ],
     clicks: []
 }
