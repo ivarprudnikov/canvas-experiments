@@ -20,7 +20,7 @@ function main() {
             } else {
                 GameInstance.update()
             }
-        }, 500);
+        }, mspf);
         c.addEventListener('click', (e) => clickOnCanvas(e, c))
     } else {
         trace('sorry.. you\'ll need a browser that supports the canvas tag,');
