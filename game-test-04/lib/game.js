@@ -1,6 +1,7 @@
 import {printState, trace} from "./trace.js";
 
 const Util = {
+    normalizeDegrees: deg => deg < 0 ? deg % 360 + 360 : deg % 360,
     distanceBetween: (point1, point2) => Math.sqrt((point1.x - point2.x)**2 + (point1.y - point2.y)**2),
     angleRadFromTo: (point1, point2) => Math.atan2(point2.y - point1.y, point2.x - point1.x),
     radiansToDegrees: rad => rad * 180 / Math.PI,
@@ -108,14 +109,14 @@ export function Game(canvas, w, h, State) {
     this.applyEffects = function () {
         let directionAngle = State.ball.directionAngle;
         if (this.state.input.left) {
-            trace('left');
             directionAngle -= State.ball.directionSpeed;
+            trace(`left ${directionAngle}`);
         }
         if (this.state.input.right) {
-            trace('right');
             directionAngle += State.ball.directionSpeed;
+            trace(`right ${directionAngle}`);
         }
-        State.ball.directionAngle = directionAngle < 0 ? directionAngle + 360 : directionAngle % 360;
+        State.ball.directionAngle = Util.normalizeDegrees(directionAngle);
 
         if (this.state.input.up) {
             trace('up');
@@ -142,7 +143,7 @@ export function Game(canvas, w, h, State) {
         }
         if (externalForce) {
             externalForce.add(Util.degreesToRadians(State.ball.directionAngle), State.ball.velocity);
-            State.ball.directionAngle = Util.radiansToDegrees(externalForce.radians);
+            State.ball.directionAngle = Util.normalizeDegrees(Util.radiansToDegrees(externalForce.radians));
             State.ball.velocity = externalForce.strength;
         }
     }

@@ -15,11 +15,11 @@ export const State = {
         }
     },
     ball: {
-        directionAngle: 0,
+        directionAngle: 135,
         directionSpeed: 3,
-        velocity: 0.5,
+        velocity: 5,
         velocityChangeSpeed: 1,
-        radius: 4,
+        radius: 40,
         pos: {
             x: 240,
             y: 240
