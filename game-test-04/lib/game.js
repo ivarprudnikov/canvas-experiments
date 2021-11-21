@@ -63,23 +63,28 @@ export function Game(canvas, w, h, State) {
     this.state = State;
     this.debugEnabled = true;
 
-    this.update = function () {
+    this.update = () => {
         this.clear();
-        this.drawFields();
-        this.applyEffects();
-        this.moveBall();
-        this.drawBall();
-        this.drawClicks();
+        this.applyUserInput();
+        this.applyExternalForces();
+        this.ensureBallInBounds();
+        this.draw();
         printState(this.state)
     }
 
-    this.clear = function () {
+    this.clear = () => {
         this.canvas.clearRect(0, 0, this.gameWidth, this.gameHeight);
         this.canvas.fillStyle = this.state.level.colors.background;
         this.canvas.fillRect(0, 0, this.gameWidth, this.gameHeight);
     }
 
-    this.drawBall = function () {
+    this.draw = () => {
+        this.drawFields();
+        this.drawBall();
+        this.drawClicks();
+    }
+
+    this.drawBall = () => {
         this.canvas.beginPath();
         this.canvas.arc(State.ball.pos.x, State.ball.pos.y, State.ball.radius, 0, 2 * Math.PI);
         this.canvas.fillStyle = this.state.level.colors.ball;
@@ -97,16 +102,32 @@ export function Game(canvas, w, h, State) {
         }
     }
 
-    this.drawFields = function () {
-        State.fields.forEach(field => {
-            this.canvas.beginPath();
-            this.canvas.arc(field.pos.x, field.pos.y, field.radius, 0, 2 * Math.PI);
-            this.canvas.strokeStyle = this.state.level.colors.ball;
-            this.canvas.stroke();
-        })
+    this.drawField = (field) => {
+        this.canvas.beginPath();
+        this.canvas.arc(field.pos.x, field.pos.y, field.radius, 0, 2 * Math.PI);
+        this.canvas.strokeStyle = this.state.level.colors.ball;
+        this.canvas.stroke();
     }
 
-    this.applyEffects = function () {
+    this.drawFields = () => {
+        State.fields.forEach(field => this.drawField(field))
+    }
+
+    this.drawClicks = () => {
+        for (const click of State.clicks) {
+            this.canvas.beginPath();
+            this.canvas.arc(click[0], click[1], 5, 0, 2 * Math.PI);
+            this.canvas.fillStyle = 'red';
+            this.canvas.fill();
+
+            this.canvas.beginPath();
+            this.canvas.arc(click[0], click[1], 25, 0, 2 * Math.PI);
+            this.canvas.strokeStyle = 'red';
+            this.canvas.stroke();
+        }
+    }
+
+    this.applyUserInput = () => {
         let directionAngle = State.ball.directionAngle;
         if (this.state.input.left) {
             directionAngle -= State.ball.directionSpeed;
@@ -126,7 +147,9 @@ export function Game(canvas, w, h, State) {
             trace('down');
             State.ball.velocity -= State.ball.velocityChangeSpeed;
         }
+    }
 
+    this.applyExternalForces = () => {
         let externalForce = null;
         for(const field of State.fields) {
             const distanceToFieldCenter = Util.distanceBetween(field.pos, State.ball.pos);
@@ -148,7 +171,7 @@ export function Game(canvas, w, h, State) {
         }
     }
 
-    this.moveBall = function() {
+    this.ensureBallInBounds = () => {
         const angle = Util.degreesToRadians(State.ball.directionAngle);
         let newX = Util.newXAtAngleAndDistance(State.ball.pos.x, angle, State.ball.velocity);
         let newY = Util.newYAtAngleAndDistance(State.ball.pos.y, angle, State.ball.velocity);
@@ -173,19 +196,5 @@ export function Game(canvas, w, h, State) {
 
         State.ball.pos.x = newX;
         State.ball.pos.y = newY;
-    }
-
-    this.drawClicks = function () {
-        for (const click of State.clicks) {
-            this.canvas.beginPath();
-            this.canvas.arc(click[0], click[1], 5, 0, 2 * Math.PI);
-            this.canvas.fillStyle = 'red';
-            this.canvas.fill();
-
-            this.canvas.beginPath();
-            this.canvas.arc(click[0], click[1], 25, 0, 2 * Math.PI);
-            this.canvas.strokeStyle = 'red';
-            this.canvas.stroke();
-        }
     }
 }
