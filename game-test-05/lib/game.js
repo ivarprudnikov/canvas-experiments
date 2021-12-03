@@ -1,7 +1,5 @@
 import {printState, trace} from "./trace.js";
 import {Util} from "./util.js";
-import {ForceVector} from "./models/forceVector.js";
-import {FieldType} from "./models/fieldType.js";
 
 export function Game(canvas, w, h, State) {
     this.gameWidth = w;
@@ -58,25 +56,14 @@ export function Game(canvas, w, h, State) {
 
     this.applyExternalForces = () => {
         let externalForce = null;
-        const forceBetweenFieldAndBall = (field, ball) => {
-            // TODO move this to the field
-            if (field.type === FieldType.CIRCLE) {
-                const distanceToFieldCenter = Util.distanceBetween(field.pos, ball.pos);
-                if (distanceToFieldCenter < (field.radius + ball.radius) && distanceToFieldCenter > 2) {
-                    const angle = Util.angleRadFromTo(ball.pos, field.pos);
-                    const force = field.force/distanceToFieldCenter;
-                    return new ForceVector(angle, force);
-                }
-            }
-        }
         let force;
         for(const field of State.fields) {
-            force = forceBetweenFieldAndBall(field, State.ball);
+            force = field.getBallForceVector(State.ball);
             if (!externalForce) externalForce = force;
             else externalForce.add(force);
         }
         for(const click of State.clicks) {
-            force = forceBetweenFieldAndBall(click, State.ball);
+            force = click.getBallForceVector(State.ball);
             if (!externalForce) externalForce = force;
             else externalForce.add(force);
         }

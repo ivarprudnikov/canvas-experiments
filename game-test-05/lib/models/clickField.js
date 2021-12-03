@@ -1,4 +1,6 @@
 import {FieldType} from "./fieldType.js";
+import {Util} from "../util.js";
+import {ForceVector} from "./forceVector.js";
 
 const TTL_DEFAULT = 50;
 
@@ -30,5 +32,14 @@ export function ClickField({x, y, radius}) {
         canvas2D.globalAlpha = 1;
 
         this.ttl--;
+    }
+
+    this.getBallForceVector = (ball) => {
+        const distanceToFieldCenter = Util.distanceBetween(this.pos, ball.pos);
+        if (distanceToFieldCenter < (this.radius + ball.radius) && distanceToFieldCenter > 2) {
+            const angle = Util.angleRadFromTo(ball.pos, this.pos);
+            const force = this.force/distanceToFieldCenter;
+            return new ForceVector(angle, force);
+        }
     }
 }

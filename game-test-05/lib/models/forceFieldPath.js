@@ -23,4 +23,8 @@ export function ForceFieldPath({force, points}) {
         canvas2D.strokeStyle = this.pathColor;
         canvas2D.stroke(this.obj);
     }
+
+    this.getBallForceVector = (ball) => {
+
+    }
 }
