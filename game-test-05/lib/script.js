@@ -1,5 +1,5 @@
 import {trace} from "./trace.js";
-import {clickOnCanvas, press, release, State} from "./state.js";
+import {clickOnCanvas, hoverOnCanvas, press, release, State} from "./state.js";
 import {Game} from "./game.js";
 
 let GameInstance, C2D, W, H;
@@ -10,7 +10,15 @@ let updateInterval;
 function main() {
     const c = document.getElementById('canvas');
     if (c.getContext) {
-        initializeCanvas(c);
+
+        C2D = c.getContext('2d');
+        C2D.lineWidth = 1;
+        C2D.globalAlpha = 1;
+        C2D.globalCompositeOperation = 'source-over';
+        W = c.width;
+        H = c.height;
+        trace('canvas initialized');
+
         GameInstance = new Game(C2D, W, H, State);
         updateInterval = window.setInterval(() => {
             if (State.input.quit) {
@@ -21,21 +29,12 @@ function main() {
                 GameInstance.update()
             }
         }, mspf);
-        c.addEventListener('click', (e) => clickOnCanvas(e, c))
+        c.addEventListener('click', evt => clickOnCanvas(evt, c))
+        c.addEventListener('mousemove', evt => hoverOnCanvas(evt, c, C2D))
     } else {
         trace('sorry.. you\'ll need a browser that supports the canvas tag,');
         trace('like Safari or Firefox 1.5+ to see this demo.');
     }
-}
-
-function initializeCanvas(c) {
-    C2D = c.getContext('2d');
-    C2D.lineWidth = 1;
-    C2D.globalAlpha = 1;
-    C2D.globalCompositeOperation = 'source-over';
-    W = c.width;
-    H = c.height;
-    trace('canvas initialized');
 }
 
 window.addEventListener('load', main)

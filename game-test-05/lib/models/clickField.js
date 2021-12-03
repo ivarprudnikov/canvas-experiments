@@ -34,12 +34,12 @@ export function ClickField({x, y, radius}) {
         this.ttl--;
     }
 
-    this.getBallForceVector = (ball) => {
-        const distanceToFieldCenter = Util.distanceBetween(this.pos, ball.pos);
-        if (distanceToFieldCenter < (this.radius + ball.radius) && distanceToFieldCenter > 2) {
-            const angle = Util.angleRadFromTo(ball.pos, this.pos);
-            const force = this.force/distanceToFieldCenter;
-            return new ForceVector(angle, force);
-        }
+    this.getForceAtPosWithin = (pos, within = 0) => {
+        const distanceToFieldCenter = Util.distanceBetween(this.pos, pos);
+        if (distanceToFieldCenter > (this.radius + within)) return;
+        if (distanceToFieldCenter < 0.1) return; // avoid peculiar behavior
+        const angle = Util.angleRadFromTo(pos, this.pos);
+        const force = this.force/distanceToFieldCenter;
+        return new ForceVector(angle, force);
     }
 }

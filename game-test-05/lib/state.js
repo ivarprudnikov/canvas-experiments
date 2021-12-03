@@ -10,7 +10,8 @@ export const State = {
         up: false,
         left: false,
         down: false,
-        quit: false
+        quit: false,
+        mousePosition: {}
     },
     level: {
         colors: {
@@ -20,7 +21,7 @@ export const State = {
     ball: new Ball(),
     fields: [
         new ForceFieldCircle({x: 150, y: 150, force: 100, radius: 150}),
-        new ForceFieldPath({force: 50, offset: 30, points: [{x:300, y:400}, {x:600, y:500}, {x:400, y:700}]})
+        new ForceFieldPath({force: 50, offset: 30, points: [{x: 300, y: 400}, {x: 600, y: 500}, {x: 400, y: 700}]})
     ],
     clicks: []
 }
@@ -98,9 +99,26 @@ export function release(evt) {
     }
 }
 
+const mouseToPosition = (mouseEvent, canvas) => ({
+    x: mouseEvent.offsetX * canvas.width / canvas.clientWidth,
+    y: mouseEvent.offsetY * canvas.height / canvas.clientHeight
+});
+
+export const sumForcesAtPointWithin = (pos, within = 0) => {
+    let sum = null;
+    for (const field of [...State.fields, ...State.clicks]) {
+        const force = field.getForceAtPosWithin(pos, within);
+        if (!sum) sum = force;
+        else sum.add(force);
+    }
+    return sum;
+}
+
 export function clickOnCanvas(evt, canvas) {
-    console.log(evt)
-    const W = canvas.width / canvas.clientWidth;
-    const H = canvas.height / canvas.clientHeight;
-    State.clicks.push(new ClickField({x: evt.offsetX * W, y: evt.offsetY * H, radius: 100}));
+    const pos = mouseToPosition(evt, canvas)
+    State.clicks.push(new ClickField({...pos, radius: 100}));
+}
+
+export function hoverOnCanvas(evt, canvas) {
+    State.input.mousePosition = mouseToPosition(evt, canvas);
 }

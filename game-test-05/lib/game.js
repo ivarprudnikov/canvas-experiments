@@ -1,5 +1,6 @@
 import {printState, trace} from "./trace.js";
 import {Util} from "./util.js";
+import {sumForcesAtPointWithin} from "./state.js";
 
 export function Game(canvas, w, h, State) {
     this.gameWidth = w;
@@ -30,6 +31,13 @@ export function Game(canvas, w, h, State) {
         State.fields.forEach(field => field.renderOn(this.canvas));
         State.ball.renderOn(this.canvas);
         State.clicks.forEach(click => click.renderOn(this.canvas));
+
+        if (State.input.mousePosition) {
+            let externalForce = sumForcesAtPointWithin(State.input.mousePosition);
+            if (externalForce) {
+                externalForce.renderOn(this.canvas, State.input.mousePosition);
+            }
+        }
     }
 
     this.applyUserInput = () => {
@@ -55,18 +63,7 @@ export function Game(canvas, w, h, State) {
     }
 
     this.applyExternalForces = () => {
-        let externalForce = null;
-        let force;
-        for(const field of State.fields) {
-            force = field.getBallForceVector(State.ball);
-            if (!externalForce) externalForce = force;
-            else externalForce.add(force);
-        }
-        for(const click of State.clicks) {
-            force = click.getBallForceVector(State.ball);
-            if (!externalForce) externalForce = force;
-            else externalForce.add(force);
-        }
+        let externalForce = sumForcesAtPointWithin(State.ball.pos, State.ball.radius);
         if (externalForce) {
             externalForce.add(Util.degreesToRadians(State.ball.directionAngle), State.ball.velocity);
             State.ball.directionAngle = Util.normalizeDegrees(Util.radiansToDegrees(externalForce.radians));

@@ -23,4 +23,13 @@ function ForceVector(radians, strength) {
         this.strength = Util.distanceBetween({x:0,y:0}, {x:x2,y:y2});
         return this;
     }
+    this.renderOn = (canvas2D, pos) => {
+        canvas2D.beginPath();
+        canvas2D.strokeStyle = 'orange';
+        canvas2D.moveTo(pos.x, pos.y);
+        canvas2D.lineTo(Util.newXAtAngleAndDistance(pos.x, this.radians, this.strength * 20),
+            Util.newYAtAngleAndDistance(pos.y, this.radians, this.strength * 20));
+        canvas2D.closePath();
+        canvas2D.stroke();
+    }
 }

@@ -24,7 +24,5 @@ export function ForceFieldPath({force, points}) {
         canvas2D.stroke(this.obj);
     }
 
-    this.getBallForceVector = (ball) => {
-
-    }
+    this.getForceAtPosWithin = (pos, within) => {}
 }
