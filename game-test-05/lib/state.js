@@ -21,7 +21,7 @@ export const State = {
     ball: new Ball(),
     fields: [
         new ForceFieldCircle({x: 150, y: 150, force: 100, radius: 150}),
-        new ForceFieldPath({force: 50, offset: 30, points: [{x: 300, y: 400}, {x: 600, y: 500}, {x: 400, y: 700}]})
+        new ForceFieldPath({force: 100, offset: 30, points: [{x: 300, y: 400}, {x: 600, y: 500}, {x: 400, y: 700}]})
     ],
     clicks: []
 }

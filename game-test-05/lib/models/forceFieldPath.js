@@ -1,4 +1,6 @@
 import {FieldType} from "./fieldType.js";
+import {Util} from "../util.js";
+import {ForceVector} from "./forceVector.js";
 
 export function ForceFieldPath({force, points}) {
     this.type = FieldType.PATH;
@@ -49,8 +51,23 @@ export function ForceFieldPath({force, points}) {
             canvas2D.strokeStyle = this.pathColor;
             canvas2D.stroke();
         }
-
     }
 
-    this.getForceAtPosWithin = (pos, within) => {}
+    this.getForceAtPosWithin = (pos, within) => {
+        if (pos.x == null || pos.y == null) return;
+        const distances = this.dots.map((dot, idx) => ([
+            Util.distanceBetween(dot, pos),
+            idx
+        ]));
+        const [A, B, C, ...rest] = distances.sort((a,b) => a[0] - b[0]);
+        if (A[0] > (this.force + within)) return;
+        if (A[0] < 0.1) return;
+        const angleA = Util.angleRadFromTo(pos, this.dots[A[1]]);
+        const angleB = Util.angleRadFromTo(pos, this.dots[B[1]]);
+        const angleC = Util.angleRadFromTo(pos, this.dots[C[1]]);
+        const forceA = this.force/A[0];
+        const forceB = this.force/B[0];
+        const forceC = this.force/C[0];
+        return new ForceVector((angleA + angleB + angleC)/3, (forceA + forceB + forceC)/3);
+    }
 }
