@@ -1,0 +1,48 @@
+* {
+    box-sizing: border-box;
+}
+
+html, body {
+    position: relative;
+    height: 100%;
+}
+
+body {
+    display: flex;
+    flex-direction: row;
+    align-items: start;
+    border: 0;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+#canvas {
+    border: 0;
+    padding: 0;
+    margin: 0;
+}
+
+.window {
+    width: 300px;
+    padding: 8px 16px;
+    flex-grow: 1;
+    color: #00FF00;
+    background-color: #001100;
+    opacity: .80;
+    border: 0;
+    font-family: "Lucida Console", "Monaco", "Courier New", Courier, mono;
+    font-size: small;
+    margin: 0;
+    min-height: 320px;
+    max-height: 100%;
+    overflow: auto;
+    align-self: stretch;
+}
+ul {
+    margin: 0;
+    padding: 0;
+}
+li {
+    list-style-type: none;
+}
